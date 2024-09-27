@@ -14,7 +14,7 @@ import { services } from "./components/services";
 const $root = document.getElementById("root");
 
 // Realizar una solicitud para obtener la sesión del usuario actual
-await fetch("http://localhost:4321/auth/me", {})
+await fetch("http://localhost:4321/auth/me", {}, { credentials: "include" })
   .then((response) => {
     // Verificar si la respuesta es exitosa
     if (response.ok) {
@@ -43,3 +43,20 @@ await fetch("http://localhost:4321/auth/me", {})
       });
     }, 1000);
   });
+
+const logout = async () => {
+  try {
+    const response = await fetch("http://localhost:4321/auth/sign-out", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (response.ok) {
+      console.log("Logout successful");
+      window.location.reload();
+    } else {
+      throw new Error("Failed to logout");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
