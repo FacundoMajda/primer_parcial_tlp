@@ -11,15 +11,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://localhost:3002",
-      "http://localhost:3003",
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:5175",
-    ],
+    origin: ["http://localhost:8080", "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -28,11 +20,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// routes
 app.use("/auth", authRouter);
 app.use("/orders", ordersRouter);
 
-// error handler
 app.use((err, _req, res, _next) => {
   console.error(err);
 
