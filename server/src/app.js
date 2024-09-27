@@ -8,11 +8,18 @@ import { ordersRouter } from "./routes/orders.routes.js";
 
 const app = express();
 
-// middlewares
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:8080",
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:3002",
+      "http://localhost:3003",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+    ],
     credentials: true,
   })
 );
@@ -32,7 +39,6 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ message: "Internal server error" });
 });
 
-// NO SE DEBE CAMBIAR EL PUERTO
 app.listen(4321, () => {
   console.log("Server is running on http://localhost:4321");
 });
