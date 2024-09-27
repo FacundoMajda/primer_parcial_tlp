@@ -1,13 +1,16 @@
 import jwt from "jsonwebtoken";
 
-// Función para crear un JWT
-export const createJwt = async (userId) => {
-  return new Promise((res, rej) => {
-    jwt.sign({ userId }, "secret", (err, token) => {
-      if (err) {
-        rej(err);
-      }
-      res(token);
-    });
-  });
+const SECRET_KEY = "secret";
+
+const createJWT = async (userId) => {
+  try {
+    const payload = { userId };
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "4h" });
+    return token;
+  } catch (error) {
+    console.log(error);
+    throw new Error("No se pudo generar el token");
+  }
 };
+
+export default createJWT;

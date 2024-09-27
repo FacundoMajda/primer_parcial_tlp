@@ -1,47 +1,61 @@
-import { createJwt } from "../helpers/createJwt.js";
-import { createUser, getUserByCredentials } from "../models/user.model.js";
+import createJWT from "../helpers/createJwt.js";
+import {
+  createUser,
+  getUserByCredentials,
+  getUserByEmail,
+} from "../models/user.model.js";
 
 export const signInCtrl = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await getUserByCredentials(email, password);
-
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ status: "error", message: "Invalid credentials" });
     }
-
-    const token = await createJwt(user.id);
-
+    const token = await createJWT(user.id);
     res.cookie("token", token, { httpOnly: true });
-
-    res.status(200).json({ token, user });
+    res.status(200).json({ status: "success", data: user, token: token });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: "error", message: error.message });
   }
 };
 
 export const signUpCtrl = async (req, res) => {
   try {
-    // ! Completar la función signUpCtrl
+    const { username, email, password } = req.body;
+
+    const userExist = getUserByEmail(email);
+    if (userExist) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "User already exist" });
+    }
+
+    const user = await createUser({ username, email, password });
+
+    return res.status(201).json({ status: "success", data: user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const signOutCtrl = (_req, res) => {
+export const signOutCtrl = (req, res) => {
   try {
-    // ! Completar la función signOutCtrl
-    res.status(200).json({ message: "Sign out success" });
+    res.clearCookie("token");
+    return res
+      .status(200)
+      .json({ status: "success", message: "Sign out success" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: "error", message: error.message });
   }
 };
 
 export const getMeCtrl = (req, res) => {
   try {
-    res.status(200).json(req.user);
+    return res.status(200).json(req.user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: "error", message: error.message });
   }
 };
